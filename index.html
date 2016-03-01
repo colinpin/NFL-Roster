@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myRoster">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Roster</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/styles/style.css">
+</head>
+
+<body>
+    <div class="container col-sm-12" ng-controller="RosterController">
+        <div id="my-spinner-container">
+            <img id="my-spinner" src="assets/images/my-spinner.gif" ng-show="loading" />
+        </div>
+        <div id="input-panel" class="panel col-lg-2 col-md-3 col-sm-4 col-xs-6 navbar-fixed-top">
+            <div class="panel-heading">
+                <h1 class="panel-title">Manage Team</h1>
+            </div>
+            <div class="panel-body">
+                <div id="search-bar">
+                    <h5>Search Players</h5>
+                    <input type="text" ng-model="search" class="form-control" placeholder="Search" />
+                </div>
+                <form class="add-player-form" ng-submit="addPlayer()">
+                    <div class="form-group">
+                        <h5>Add Player</h5>
+                        <input type="text" ng-model="newPlayer.firstName" class="form-control" id="first-name" placeholder="First Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" ng-model="newPlayer.lastName" class="form-control" id="last-name" placeholder="Last Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" ng-model="newPlayer.position" class="form-control" id="number" placeholder="Position">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" ng-model="newPlayer.number" class="form-control" id="password" placeholder="Number">
+                    </div>
+
+                    <button type="submit" class="btn btn-default">Add Player</button>
+                </form>
+                <div class="api-buttons">
+                    <h5>Load All Players</h5>
+                    <button type="submit" class="btn btn-default" ng-click="loadPlayers()">Load Players</button>
+                    <button type="submit" class="btn btn-default" ng-click="setPlayers()">Set Players</button>
+                </div>
+                <!--<div id="filter-boxes">
+                    <h5>Filter Players</h5>
+                    <input type="checkbox" ng-click="includePosition('QB')"/> Quarterback</br/>
+                    <input type="checkbox" ng-click="includePosition('D')"/> Defense</br/>
+                    <input type="checkbox" ng-click="includePosition('ST')"/> Special Teams</br/>
+                    <input type="checkbox" ng-click="includePosition('DST')"/> Special Teams</br/>
+                    <input type="checkbox" ng-click="includePosition('DL')"/> Defensive Line</br/>
+                    <input type="checkbox" ng-click="includePosition('ST')"/> Defensive Back</br/>
+                </div>
+                Showing {{playerIncludes}}-->
+            </div>
+        </div>
+        <div id="cards-panel" class="panel col-lg-offset-2 col-md-offset-3 col-sm-offset-4 col-xs-offset-4 col-lg-10 col-md-9 col-sm-8 col-xs-6">
+            <div class="panel-heading">
+                <h1 class="panel-title">My Fantasy NFL Team</h1>
+            </div>
+            <div class="panel-body">
+                <div id="drafted-players" class="col-sm-12">
+                    <a class="card-hover-team" href="">
+                        <div class="player-card panel" ng-click="deletePlayer(player)" ng-repeat="player in team | limitTo: 12" ng-class="'drafted'">
+                            <!--<button class="delete"><span class="glyphicon glyphicon glyphicon-remove"></span></button>-->
+                            <!--<button class="draft" ng-click="draftPlayer($index)"><span class="glyphicon glyphicon glyphicon-plus"></span></button>-->
+                            <div class="player-image">
+                                <img src="{{player.photo}}">
+                            </div>
+                            <div class="player-data">
+                                <div class="player-name">
+                                    <h6>{{player.position | uppercase}} - {{player.pro_team | uppercase}}</h6>
+                                    <h1>{{player.firstname}}</br>{{player.lastname}}</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <!--
+                <div id="sorted-players" class="col-sm-12">
+                    <a class="card-hover-team" href="">
+                        <div class="player-card panel  {{player.pro_team}}" ng-repeat="player in playerIncludes | filter:playerFilter">
+                            <!--<button class="delete"><span class="glyphicon glyphicon glyphicon-remove"></span></button>-->
+                            <!--<button class="draft" ng-click="draftPlayer($index)"><span class="glyphicon glyphicon glyphicon-plus"></span></button>-->
+                            <!--<div class="player-image">
+                                <img src="{{player.photo}}">
+                            </div>
+                            <div class="player-data">
+                                <div class="player-name">
+                                    <h6>{{player.position | uppercase}} - {{player.pro_team | uppercase}}</h6>
+                                    <h1>{{player.firstname}}</br>{{player.lastname}}</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                -->
+                <div id="undrafted-players" class="col-sm-12">
+                    <a class="card-hover-roster" href="">
+                        <div class="player-card panel {{player.pro_team}}"  ng-click="draftPlayer(player)" ng-repeat="player in roster | filter: search | limitTo: 50">
+                            <!--<button class="delete" ng-click="deletePlayer($index)"><span class="glyphicon glyphicon glyphicon-remove"></span></button>-->
+                            <!--<button class="draft"><span class="glyphicon glyphicon glyphicon-plus"></span></button>-->
+                            <div class="player-image">
+                                <!--<img src="{{player.photo}}">-->
+                            </div>
+                            <div class="player-data">
+                                <div class="player-name">
+                                    <h6>{{player.position | uppercase}} - {{player.pro_team | uppercase}}</h6>
+                                    <h1>{{player.firstname}}</br>{{player.lastname}}</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/controller/controller.js"></script>
+    <script src="app/services/data.services.js"></script>
+</body>
+
+</html>
